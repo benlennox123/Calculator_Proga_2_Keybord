@@ -216,8 +216,15 @@ namespace Calculator_Proga.ViewModels
             if (InOut.Length < MainWindow.n)        //Ограничение на размер числа
             {
                 if ((string)p == "-" && negative == false)          //инверсия отрицательное/положительное число
-                {
-                    InOut = "-" + InOut;
+                {   
+                    if(InOut=="")                   //минус 0 для ввода запятой
+                    {
+                        InOut = "-0" + InOut;
+                    }
+                    else
+                    {
+                        InOut = "-" + InOut;
+                    }
                     negative = true;
                 }
                 else
