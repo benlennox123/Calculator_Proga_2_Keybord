@@ -20,7 +20,6 @@ namespace Calculator_Proga.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
         }
 
-        private bool negative = false; //отрицательное или положительное число
         private bool deci = false; //десятичная дробь или целое
 
         //Первое число
@@ -146,7 +145,6 @@ namespace Calculator_Proga.ViewModels
                 Number1 = "";               //результат получаем после результата, - обнуляем для верхней строки формулы
                 Number2 = "";               //
                 Action = "";                //
-                negative = false;
                 deci = false;
                 switch (Equ)
                 {
@@ -180,9 +178,6 @@ namespace Calculator_Proga.ViewModels
                 InOut = Result.ToString();
                 Result = 0;     //обнуляю, чтобы не было ошибки при действие в два значения, если одно из значений результат команды в одно значение
             }
-            //InOut = Result.ToString();
-            //Result = 0;                     //обнуляю, чтобы не было ошибки при действие в два значения, если одно из значений результат команды в одно значение
-            negative = false;
         }
         //
 
@@ -199,7 +194,6 @@ namespace Calculator_Proga.ViewModels
                 Action = "";
                 Equ = "";
                 Result = 0;
-                negative = false;
                 deci = false;
             }
             if (InOut == "0")                       //чтобы число не начиналось с нуля
@@ -215,59 +209,41 @@ namespace Calculator_Proga.ViewModels
             }
             if (InOut.Length < MainWindow.n)        //Ограничение на размер числа
             {
-                if ((string)p == "-" && negative == false)          //инверсия отрицательное/положительное число
-                {   
-                    if(InOut=="")                   //минус 0 для ввода запятой
+                //новая версия отрицательного числа
+                if ((string)p == "-")          //инверсия отрицательное/положительное число
+                {
+                    if (InOut == "")                   //минус 0 - это просто 0
                     {
-                        InOut = "-0" + InOut;
+                        InOut = "0";
                     }
                     else
                     {
-                        InOut = "-" + InOut;
+                        InOut = (Convert.ToDouble(InOut) * -1).ToString() ; //инверсия
                     }
-                    negative = true;
+                    
                 }
                 else
                 {
-                    if ((string)p == "-" && negative == true)
+                    if (deci == false)                     //проверка на дробь
                     {
-                        if (InOut.Length != 0)
+
+                        if ((string)p == ",")
                         {
-                            InOut = InOut.Substring(1);
-                        }
-                        negative = false;
-                        if (InOut == "")                        //при инверсии нуля, вернуть 0
-                        {
-                            InOut = "0";
+                            InOut += p.ToString();
+                            deci = true;                //определение десятичной дроби
                         }
                     }
-                    else
+                    if ((string)p != ",")
                     {
-                        if (deci == false)                     //проверка на дробь
+                        if ((string)p == "0" && InOut == "-")           //чтобы не было бесконечных нулей сразу после минуса
                         {
-
-                            if ((string)p == ",")
-                            {
-                                InOut += p.ToString();
-                                deci = true;                //определение десятичной дроби
-                            }
+                            InOut = "-";
                         }
-                        //else
-                        //{
-                        if ((string)p != ",")
+                        else
                         {
-                            if ((string)p == "0" && InOut == "-")           //чтобы не было бесконечных нулей сразу после минуса
-                            {
-                                InOut = "-";
-                            }
-                            else
-                            {
-                                InOut += p.ToString();                  //ввод числа
+                            InOut += p.ToString();                  //ввод числа
 
-                            }
                         }
-
-                        //}
                     }
                 }
             }
@@ -288,7 +264,6 @@ namespace Calculator_Proga.ViewModels
                 Action = p.ToString();
                 Number1 = InOut;
                 InOut = "0";
-                negative = false;
                 deci = false;
             }
             else                                //если действие уже было: можно совершить смену действия, или начать новое действие
@@ -311,7 +286,6 @@ namespace Calculator_Proga.ViewModels
                     InOut = "0";
                     Equ = "";
                     Result = 0;
-                    negative = false;
                     deci = false;
                     if (Action != p.ToString())     //смена действия после действия, например 5+6-3 это 11-3
                     {
@@ -342,7 +316,6 @@ namespace Calculator_Proga.ViewModels
                 case "CE":
                     InOut = "0";
                     deci = false;
-                    negative = false;
                     break;
                 case "C":
                     Number1 = "";
@@ -352,7 +325,6 @@ namespace Calculator_Proga.ViewModels
                     Equ = "";
                     Result = 0;
                     deci = false;
-                    negative = false;
                     break;
             }
         }
